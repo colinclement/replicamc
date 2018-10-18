@@ -4,16 +4,11 @@ Tests to make sure things work
 
 import numpy as np
 from itertools import repeat, product
-import scipy.ndimage as ndi
+from collections import Counter
+
 import replicamc
 
 rng = np.random.RandomState(14850)
-
-def hamiltonian(J, s):
-    s = np.array(list(s)).reshape(J.shape[1:])
-    sh = s * np.roll(s, -1)
-    sv = s * np.roll(s, -1, 0)
-    return -np.sum(J[0]*sh + J[1]*sv)
 
 def smallprobabilitytest():
     """ 
@@ -31,10 +26,4 @@ def smallprobabilitytest():
     probs /= probs.sum(1)[:,None]
     return probs
 
-def testcluster(p=0.3):
-    img = 1*(np.random.rand(100,100)<p)
-    img = ndi.binary_closing(img, border_value=1)
-    lab, num = ndi.label(img)
-    ind = np.arange(img.size+1)
-    clusters = [set(ind[lab==i]) for i in range(num)]
 

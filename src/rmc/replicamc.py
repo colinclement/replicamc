@@ -4,12 +4,11 @@ from graph import Graph
 
 class SquareLattice(object):
     def __init__(self, L, J):
+        assert J.shape == (2, L, L), "J is incorrect shape"
         self.L = L
         self.nv = L*L
         self.ne = 2*L*L
         self.J = J
-        assert J.shape == (2, L, L), "J is incorrect shape"
-        self._1100 = [1,1,0,0]
 
     def flatidx(self, i, j):
         return i*self.L + j
@@ -23,13 +22,25 @@ class SquareLattice(object):
 
     def neighbonds(self, i, flatidx=True):
         L = self.L
+        y, x = i//L, i%L
         n = self.neighbors(i, flatidx)
-        return n, [self.J[d, nn//L, nn%L] for d, nn in zip(self._1100, n)]
+        J = [self.J[1, n[0]//L, n[0]%L], self.J[1, y, x], 
+             self.J[0, n[2]//L, n[2]%L], self.J[0, y, x]]
+        return n, J
 
-    def bond(self, i, j):
-        for n, J in zip(*self.neighbonds(i)):
-            if i == n:
-                return J
+    def hamiltonian(self, s):
+        s = s.reshape(self.J.shape[1:])
+        sh = s * np.roll(s, -1, 1)
+        sv = s * np.roll(s, -1, 0)
+        return -np.sum(self.J[0]*sh + self.J[1]*sv)
+
+    def graph_test_hamiltonian(self, s):
+        s = s.ravel()
+        energy = 0
+        for i in range(self.nv):
+            for n, j in zip(*self.neighbonds(i)):
+                energy -= j * s[i] * s[n]
+        return energy/2.  # double counted
 
 
 class GeneralLattice(Graph):
@@ -60,6 +71,13 @@ class GeneralLattice(Graph):
                 return edge.w
             edge = edge.nextedge
 
+    def hamiltonian(self, s):
+        energy = 0
+        for i in range(self.nv):
+            for n, j in zip(*self.neighbonds(i)):
+                energy -= j * s[i] * s[n]
+        return energy/2.  # double counted
+
 
 class ReplicaMonteCarlo(object):
     def __init__(self, L, tlist=[0.1, 1.], **kwargs):
@@ -73,15 +91,22 @@ class ReplicaMonteCarlo(object):
 
     @property
     def blist(self):
-        return 1./tlist
+        return 1./self.tlist
+
+    def hamiltonian(J, s):
+        s = np.array(list(s)).reshape(J.shape[1:])
+        sh = s * np.roll(s, -1)
+        sv = s * np.roll(s, -1, 0)
+        return -np.sum(J[0]*sh + J[1]*sv)
 
     def deltaE(self, i, s, G):
-        ns, bs = self.G.neighbonds(i, j)
+        ns, bs = self.G.neighbonds(i)
         return 2*s[i]*sum([b*s[n] for n, b in zip(ns, bs)])
 
     def singlespinsweep(self, s, G, b):
         for i in range(len(s)):
-            if dE < 0 or np.exp(-b*self.deltaE(i, s, G)) > self.rng.randn():
+            dE = self.deltaE(i, s, G)
+            if dE < 0 or np.exp(-b*dE) > self.rng.rand():
                 s[i] = -s[i]
 
     def mhsweep(self):
@@ -102,6 +127,13 @@ class ReplicaMonteCarlo(object):
         self.mhsweep()
         self.swsweep()
         self.t += 1
+
+    def run(self, n):
+        samples = []
+        for i in range(n):
+            self.step()
+            samples.append(self.s.copy())
+        return samples
 
 
 def swendsenwangcluster(s1, s2, G):
