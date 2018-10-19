@@ -5,6 +5,7 @@ Tests to make sure things work
 import numpy as np
 from itertools import repeat, product
 from collections import Counter
+import matplotlib.pyplot as plt
 
 import replicamc
 
@@ -39,3 +40,17 @@ def countstates(J, blist, n=200000):
             for i, cnt in enumerate(counters)]
     return np.array(probs)
 
+def compare(J=J, blist=blist, n=1000000):
+    p = exactprobs(J, blist)
+    pmc = countstates(J, blist, n)
+    order = np.argsort(p[0])
+    for i in range(len(blist)):
+        plt.plot(p[i][order], label='Exact $\beta$={}'.format(blist[i]))
+        plt.plot(pmc[i][order], '.', label='RMC$\beta$={}'.format(blist[i]))
+    plt.yscale('log') 
+    plt.legend()
+
+    nonzero = np.nonzero(pmc[0,order])[0]
+    plt.xlim([nonzero.min(), 2**16])
+    plt.ylim([pmc[0,order][nonzero].min(), p.max()])
+    return plt.gcf()
