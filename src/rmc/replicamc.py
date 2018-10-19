@@ -100,7 +100,7 @@ class ReplicaMonteCarlo(object):
         return -np.sum(J[0]*sh + J[1]*sv)
 
     def deltaE(self, i, s, G):
-        ns, bs = self.G.neighbonds(i)
+        ns, bs = G.neighbonds(i)
         return 2*s[i]*sum([b*s[n] for n, b in zip(ns, bs)])
 
     def singlespinsweep(self, s, G, b):
@@ -117,15 +117,18 @@ class ReplicaMonteCarlo(object):
         s, b = self.s, self.blist
         for i in range(len(b)-1):
             s1, s2 = s[i], s[i+1]
-            clusterG = clustergraph(s1, s2, self.G)
-            tau = s1 * s2
-            self.singlespinsweep(tau, clusterG, b[i]-b[i+1])
-            s1 *= tau
-            s2 *= tau
+            clusterG, clust = clustergraph(s1, s2, self.G)
+            flip = np.ones(clusterG.nv)
+            self.singlespinsweep(flip, clusterG, b[i]-b[i+1])
+            for f, cl in zip(flip, clust):
+                for c in cl:
+                    s1[c] *= f
+                    s2[c] *= f
 
-    def step(self):
+    def step(self, period=5):
         self.mhsweep()
-        self.swsweep()
+        if self.t % period == 0:
+            self.swsweep()
         self.t += 1
 
     def run(self, n):
@@ -165,12 +168,12 @@ def clustergraph(s1, s2, squareG):
     L, J = squareG.L, squareG.J
     G = GeneralLattice(len(clusters))
     for i, (c0, ob0) in enumerate(zip(clusters, outbounds)):
-        for j, (c1, ob1) in enumerate(zip(clusters[i+1:], outbounds[i+1:])):
+        for j, c1 in enumerate(clusters[i+1:]):
             clusterbond = 0
             for idx in ob0.intersection(c1):
                 for n, bond in zip(*squareG.neighbonds(idx)):
                     if n in c0:
                         clusterbond += bond * s1[idx] * s1[n]
-            if not bond == 0:
-                G.insert(i, j+i+1, w=clusterbond)
-    return G
+            if not clusterbond == 0:
+                G.insert(i, j+i+1, w = - clusterbond)
+    return G, clusters
