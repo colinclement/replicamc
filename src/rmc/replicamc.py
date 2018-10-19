@@ -29,7 +29,7 @@ class SquareLattice(object):
         return n, J
 
     def hamiltonian(self, s):
-        s = s.reshape(self.J.shape[1:])
+        s = np.array(s).reshape(self.J.shape[1:])
         sh = s * np.roll(s, -1, 1)
         sv = s * np.roll(s, -1, 0)
         return -np.sum(self.J[0]*sh + self.J[1]*sv)
@@ -125,17 +125,18 @@ class ReplicaMonteCarlo(object):
                     s1[c] *= f
                     s2[c] *= f
 
-    def step(self, period=5):
+    def step(self, period=2):
         self.mhsweep()
         if self.t % period == 0:
             self.swsweep()
         self.t += 1
 
-    def run(self, n):
+    def run(self, n, period=5, thin=5):
         samples = []
         for i in range(n):
-            self.step()
-            samples.append(self.s.copy())
+            self.step(period)
+            if i % thin == 0:
+                samples.append(self.s.copy())
         return samples
 
 
