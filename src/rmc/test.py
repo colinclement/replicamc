@@ -45,8 +45,8 @@ def compare(J=J, blist=blist, n=1000000):
     pmc = countstates(J, blist, n)
     order = np.argsort(p[0])
     for i in range(len(blist)):
-        plt.plot(p[i][order], label='Exact $\beta$={}'.format(blist[i]))
-        plt.plot(pmc[i][order], '.', label='RMC$\beta$={}'.format(blist[i]))
+        plt.plot(p[i][order], label=r'Exact $\beta$={}'.format(blist[i]))
+        plt.plot(pmc[i][order], '.', label=r'RMC $\beta$={}'.format(blist[i]))
     plt.yscale('log') 
     plt.legend()
 
