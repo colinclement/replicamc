@@ -34,7 +34,7 @@ class SquareLattice(object):
         sv = s * np.roll(s, -1, 0)
         return -np.sum(self.J[0]*sh + self.J[1]*sv)
 
-    def graph_test_hamiltonian(self, s):
+    def graph_hamiltonian(self, s):
         s = s.ravel()
         energy = 0
         for i in range(self.nv):
@@ -64,13 +64,6 @@ class GeneralLattice(Graph):
             edge = edge.nextedge
         return idxs, bonds
 
-    def bond(self, i, j):
-        edge = self.edges[i]
-        while edge:
-            if edge.y == j:
-                return edge.w
-            edge = edge.nextedge
-
     def hamiltonian(self, s):
         energy = 0
         for i in range(self.nv):
@@ -92,12 +85,6 @@ class ReplicaMonteCarlo(object):
     @property
     def blist(self):
         return 1./self.tlist
-
-    def hamiltonian(J, s):
-        s = np.array(list(s)).reshape(J.shape[1:])
-        sh = s * np.roll(s, -1)
-        sv = s * np.roll(s, -1, 0)
-        return -np.sum(J[0]*sh + J[1]*sv)
 
     def deltaE(self, i, s, G):
         ns, bs = G.neighbonds(i)
