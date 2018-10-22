@@ -93,8 +93,3 @@ float deltaEsquarelattice(int i, int L, int *s, float *J)
     dE += s[idx((y-1)%L, x, L)] * Jv[idx((y-1)%L, x, L)]; 
     return 2 * s[i] * dE;
 }
-
-void swendsenwangcluster(int *s1, int *s2, int L, lol **clusters)
-{
-    return;
-}
