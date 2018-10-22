@@ -29,6 +29,13 @@ void destroyList(ll *list);
 // add element i to list
 void pushint(int i, ll **list);
 
+// remove and return the first element (returns -1 if empty)
+int popint(ll **head);
+
+// find the first instance of element i and remove it
+// or return -1 if i is not in head
+int removeval(int i, ll **head) ;
+
 // add list to list of lists lolists
 void pushList(ll* list, lol **lolists);
 

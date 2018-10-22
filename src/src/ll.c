@@ -54,6 +54,43 @@ void pushint(int i, ll **list)
     *list = new;
 }
 
+//NOTE: if you pop the of a list without moving the pointer of 
+int popint(ll **head)  //remove and return first element
+{
+    ll *next=NULL;
+    if (*head == NULL)
+        return -1;
+    next = (*head)->next;
+    int toreturn = (*head)->i;
+    free(*head);
+    *head = next;
+    return toreturn;
+}
+
+int removeval(int i, ll **head)
+{
+    ll *current = *head;
+    int toreturn = -1;
+    if (current == NULL) // empty 
+        return toreturn;
+    if (current->i == i)
+        return popint(head);
+
+    while (current != NULL)
+    {  // look ahead by one
+        if (current->next == NULL)
+            return -1;
+        if (current->next->i == i)
+            break; 
+        current = current->next;
+    }
+    ll *tmp = current->next;
+    toreturn = tmp->i;
+    current->next = tmp->next;
+    free(tmp);
+    return toreturn;  // i is not in head
+}
+
 void pushList(ll* list, lol **lolists)
 {
     lol *new = (lol *)malloc(sizeof(lol));
