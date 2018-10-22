@@ -2,18 +2,34 @@
 #include <stdio.h>
 #include <ll.h>
 
+// Macro for checking memory allocation
+#define checkptr(ptr) if (ptr == NULL)\
+    {\
+        fprintf(stderr, "Failed to allocated memory\n");\
+        free(ptr);\
+        exit(0);\
+    }
+
 ll* initList(int i)
 {
-    ll *newList = (ll *)malloc(sizeof(ll));
-    if (newList == NULL)
-    {
-        fprintf(stderr, "Failed to allocated new list\n");
-        free(newList);
-        exit(0);
-    }
-    newList->i = i;
-    newList->next = NULL;
-    return newList;
+    ll *new = (ll *)malloc(sizeof(ll));
+
+    checkptr(new)
+
+    new->i = i;
+    new->next = NULL;
+    return new;
+}
+
+lol* initListofLists(ll *list)
+{
+    lol *new = (lol *)malloc(sizeof(lol));
+    
+    checkptr(new);
+
+    new->list = list;
+    new->next = NULL;
+    return new;
 }
 
 void destroyList(ll *list)
@@ -30,34 +46,55 @@ void destroyList(ll *list)
 void pushint(int i, ll **list)
 {
     ll *new = (ll *)malloc(sizeof(ll));
-    if (new == NULL)
-    {
-        fprintf(stderr, "Failed to allocated new list\n");
-        free(new);
-        exit(0);
-    }
+
+    checkptr(new)
+
     new->i = i;
     new->next = *list;
     *list = new;
 }
 
-void pushList(ll* list, lol *lists)
+void pushList(ll* list, lol **lolists)
 {
-    lists->N ++;
-    lol->lists    
+    lol *new = (lol *)malloc(sizeof(lol));
+    
+    checkptr(new)
+
+    new->list = list;
+    new->next = *lolists;
+    *lolists = new;
+}
+
+void destroyListofLists(lol *lolists)
+{
+    lol *head = lolists, *tmp;
+    while (head != NULL)
+    {
+        tmp = head->next;
+        destroyList(head->list);
+        free(head);
+        head = tmp;
+    }
 }
 
 void printll(ll *list)
 {
     ll *head = list;
-    int i = 0;
     while (head != NULL)
     {
-        printf("%i\n", head->i);
+        printf("%i ", head->i);
         head = head->next;
-        i += 1;
-        if (i > 10)
-            break;
+    }
+    printf("\n");
+}
+
+void printlol(lol *lolists)
+{
+    lol *head = lolists;
+    while (head != NULL)
+    {
+        printll(head->list);
+        head = head->next;
     }
 }
 
