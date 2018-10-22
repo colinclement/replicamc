@@ -10,10 +10,10 @@ LDIR=../lib
 
 LIBS=  # -lm
 
-_DEPS=graph.h
+_DEPS=graph.h ll.h
 DEPS=$(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ=test.o graph.o
+_OBJ=test.o graph.o ll.o
 OBJ=$(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: %.c $(DEPS)

@@ -1,5 +1,5 @@
-#ifndef HEADER_GRAPH
-#define HEADER_GRAPH
+#ifndef GRAPH_H
+#define GRAPH_H
 
 typedef struct edgenode edgenode;
 
