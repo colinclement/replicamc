@@ -15,15 +15,22 @@ int main(int argc, const char* argv[])
     destroyGraph(G);
 
     ll *list = initList(0);
-    push(1, &list);
-    push(2141, &list);
-    push(4, &list);
+    pushint(1, &list);
+    pushint(2141, &list);
+    pushint(4, &list);
     printll(list);
     printf("is 0 in the list? %i\n", search(0, list));
     printf("is 1 in the list? %i\n", search(1, list));
     printf("is 5 in the list? %i\n", search(5, list));
     printf("is 2141 in the list? %i\n", search(2141, list));
+    ll *list2 = initList(102);
+    pushint(1230, &list2);
 
-    destroyList(list);
+    lol *lolists = initListofLists(list);
+    pushList(list2, &lolists);
+    printlol(lolists);
+
+    destroyListofLists(lolists);
+    //destroyList(list);
     return 0;
 }
