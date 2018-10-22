@@ -8,6 +8,13 @@ struct ll {
     struct ll *next;
 };
 
+typedef struct lol lol;
+
+struct lol {
+    ll *list;
+    struct lol *next;
+};
+
 ll *initList(int i);
 
 void destroyList(ll *list);

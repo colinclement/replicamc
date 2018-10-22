@@ -27,7 +27,7 @@ void destroyList(ll *list)
     }
 }
 
-void push(int i, ll **list)
+void pushint(int i, ll **list)
 {
     ll *new = (ll *)malloc(sizeof(ll));
     if (new == NULL)
@@ -39,6 +39,12 @@ void push(int i, ll **list)
     new->i = i;
     new->next = *list;
     *list = new;
+}
+
+void pushList(ll* list, lol *lists)
+{
+    lists->N ++;
+    lol->lists    
 }
 
 void printll(ll *list)
