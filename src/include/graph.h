@@ -24,4 +24,6 @@ void insertEdge(int i, int j, float w, graph *G);
 
 float deltaE(int i, int *s, graph *G);
 
+float deltaEsquare(int i, int L, int *s, float *J);
+
 #endif

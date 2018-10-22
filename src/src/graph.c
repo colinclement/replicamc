@@ -68,13 +68,32 @@ void insertEdge(int i, int j, float w, graph *G)
 
 float deltaE(int i, int *s, graph *G)
 {
-    int si = s[i];
     float dE = 0.;
     edgenode *head = *(G->edges + i);
     while (head != NULL)
     {
-        dE += si * s[head->y] * head->w;
+        dE += s[head->y] * head->w;
         head = head->nextedge;
     }
-    return 2*dE;
+    return 2 * s[i] * dE;
+}
+
+#define idx(y, x, L) (y*L + x)
+
+float deltaEsquarelattice(int i, int L, int *s, float *J)
+{
+    int y = i / L, x = i % L;
+    float *Jv = J + L*L;  // vertical bonds
+    
+    // right, down, left, up
+    float dE = s[idx(y, x+1, L)] * J[i];
+    dE += s[idx((y+1)%L, x, L)] * Jv[i];
+    dE += s[idx(y, x-1, L)] * J[idx(y, (x-1)%L, L)]; 
+    dE += s[idx((y-1)%L, x, L)] * Jv[idx((y-1)%L, x, L)]; 
+    return 2 * s[i] * dE;
+}
+
+void swendsenwangcluster(int *s1, int *s2, int L, lol **clusters)
+{
+    return;
 }
