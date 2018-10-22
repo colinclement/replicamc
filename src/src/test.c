@@ -40,6 +40,9 @@ int main(int argc, const char* argv[])
     printll(list3);
     //popint(&(list3->next->next));
     removeval(10, &list3);
+    removeval(1230, &list3);
+    removeval(102, &list3);
+    printf("list3 is null %i\n", (list3==NULL));
     printf("printing list3\n");
     printll(list3);
 
