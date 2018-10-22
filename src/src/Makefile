@@ -1,26 +1,28 @@
+# This Makefile was made following the tutorial on 
+# http://www.cs.colby.edu/maxwell/courses/tutorials/maketutor/
 
-# These are locations that will be unique to your computer
-#PYTHON_DIR = $(HOME)/anaconda
-CUDA_INC = -I$(CUDA_HOME)/inc
-CUDA_LIB = -L$(CUDA_HOME)/lib64 -lcudart -lcublas
+IDIR=../include
+CC=gcc
+CFLAGS=-I$(IDIR)
 
-#Numpy headers
-INC = -I$(PYTHON_DIR)/include/python3.6m/
-INC += -I$(PYTHON_DIR)/lib/python3.6/site-packages/numpy/core/include/numpy/
+ODIR=obj
+LDIR=../lib
 
-#CUDA helper function for debugging
-INC += -I$(CUDA_HOME)/samples/common/inc
+LIBS=  # -lm
 
-CFLAGS = -O3 -D_FORCE_INLINES #-g 
-CUDA_FLAGS = #--use_fast_math
+_DEPS=graph.h
+DEPS=$(patsubst %,$(IDIR)/%,$(_DEPS))
 
-all: _superreg.so
-	
-_superreg.so: superreg.o
-	g++ $(CFLAGS) -fPIC -shared -o _superreg.so superreg.o $(CUDA_LIB)
+_OBJ=test.o graph.o
+OBJ=$(patsubst %,$(ODIR)/%,$(_OBJ))
 
-superreg.o: superreg.cu
-	nvcc $(CFLAGS) $(CUDA_FLAGS) -c superreg.cu -Xcompiler -fPIC $(INC) $(CUDA_INC)
+$(ODIR)/%.o: %.c $(DEPS)
+	$(CC) -c -o $@ $< $(CFLAGS)
+
+test: $(OBJ)
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+
+.PHONY: clean  # dont try to make a file named clean
 
 clean:
-	rm -f *.o *.so
+	rm -f $(ODIR)/*.o *~ core

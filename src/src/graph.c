@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "graph.h"
+#include <graph.h>
 
 graph* initGraph(int Nv)
 {
