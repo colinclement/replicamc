@@ -3,12 +3,14 @@
 
 IDIR=../include
 CC=gcc
-CFLAGS=-I$(IDIR)
+CFLAGS=-I$(IDIR) 
+
+PCGLIB=../lib/pcg-c-basic-master
+CFLAGS += -I$(PCGLIB)
 
 ODIR=obj
-LDIR=../lib
 
-LIBS=  # -lm
+LIBS=$(PCGLIB)/pcg_basic.o# -lm
 
 _DEPS=graph.h ll.h cluster.h
 DEPS=$(patsubst %,$(IDIR)/%,$(_DEPS))
@@ -20,9 +22,9 @@ $(ODIR)/%.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 test: $(OBJ)
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(LIBS) $(CFLAGS)
 
-.PHONY: clean  # dont try to make a file named clean
+.PHONY: clean # dont try to make a file named clean
 
 clean:
 	rm -f $(ODIR)/*.o *~ core
