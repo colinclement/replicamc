@@ -7,6 +7,8 @@
 // containing the spins which are adjacent to each cluster but not contained in
 // it. These indices will allow us to form the adjacency graph upon which
 // Metropolis-Hastings steps can be taken.
-void swendsenwangcluster(int *s1, int *s2, lol **clusters, lol **outbounds, int L);
+void swendsenWangCluster(int *s1, int *s2, int **label, int *Nc, lol **outbounds, int L);
+
+void clusterGraph(int *s1, int *s2, float *J, graph **G, int L);
 
 #endif
