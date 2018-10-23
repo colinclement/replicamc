@@ -3,6 +3,10 @@
 #include <graph.h>
 #include <ll.h>
 #include <cluster.h>
+#include <pcg_basic.h>
+
+// 2**32-1
+#define RAND32_MAX 4294967295
 
 int main(int argc, const char* argv[])
 {
@@ -64,5 +68,11 @@ int main(int argc, const char* argv[])
     destroyListofLists(clusters);
     destroyListofLists(outbounds);
 
+    pcg32_random_t rng;
+    pcg32_srandom_r(&rng, 42u, 54u); // seed deterministically
+    for (int i=0; i < 100; i++)
+        printf("%f\n ", ((float)pcg32_random_r(&rng)) / (float) RAND32_MAX);
+    printf("\n");
+    printf("%li \n", RAND32_MAX);
     return 0;
 }
