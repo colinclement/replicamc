@@ -81,15 +81,15 @@ float deltaE(int i, int *s, graph *G)
 
 #define idx(y, x, L) (y*L + x)
 
-float deltaEsquarelattice(int i, int L, int *s, float *J)
+float deltaEsquarelattice(int i, int *s, float *J, int L)
 {
     int y = i / L, x = i % L;
     float *Jv = J + L*L;  // vertical bonds
     
     // right, down, left, up
-    float dE = s[idx(y, x+1, L)] * J[i];
-    dE += s[idx((y+1)%L, x, L)] * Jv[i];
-    dE += s[idx(y, x-1, L)] * J[idx(y, (x-1)%L, L)]; 
-    dE += s[idx((y-1)%L, x, L)] * Jv[idx((y-1)%L, x, L)]; 
+    float dE = s[idx(y, MOD(x+1,L), L)] * J[i];
+    dE += s[idx(MOD(y+1,L), x, L)] * Jv[i];
+    dE += s[idx(y, MOD(x-1,L), L)] * J[idx(y, MOD(x-1,L), L)]; 
+    dE += s[idx(MOD(y-1,L), x, L)] * Jv[idx(MOD(y-1,L), x, L)]; 
     return 2 * s[i] * dE;
 }

@@ -42,6 +42,6 @@ float deltaE(int i, int *s, graph *G);
 
 // Compute the change in energy from flipping s[i] in a square
 // lattice of size LxL with bonds J
-float deltaEsquare(int i, int L, int *s, float *J);
+float deltaEsquarelattice(int i, int *s, float *J, int L);
 
 #endif
