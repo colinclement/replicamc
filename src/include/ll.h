@@ -1,6 +1,14 @@
 #ifndef LL_H
 #define LL_H
 
+// Macro for checking memory allocation
+#define checkptr(ptr) if (ptr == NULL)\
+    {\
+        fprintf(stderr, "Failed to allocated memory\n");\
+        free(ptr);\
+        exit(0);\
+    }
+
 typedef struct ll ll;
 
 // Standard linked list which contains integers

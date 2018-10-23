@@ -2,13 +2,6 @@
 #include <stdio.h>
 #include <ll.h>
 
-// Macro for checking memory allocation
-#define checkptr(ptr) if (ptr == NULL)\
-    {\
-        fprintf(stderr, "Failed to allocated memory\n");\
-        free(ptr);\
-        exit(0);\
-    }
 
 ll* initList(int i)
 {
