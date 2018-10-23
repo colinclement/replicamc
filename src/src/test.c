@@ -55,24 +55,31 @@ int main(int argc, const char* argv[])
     //destroyList(list3);
     int L=4;
     int s1[] = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
-    int s2[] = {1,1,1,1,1,1,-1,1,1,-1,-1,1,1,1,1,1};
+    int s2[] = {-1,1,1,1,1,1,-1,1,1,-1,-1,1,1,1,1,1};
 
-    lol *clusters, *outbounds;
+    lol *outbounds;
+    int *label, Nc;
 
-    swendsenwangcluster(s1, s2, &clusters, &outbounds, L);
-    printf("clusters:\n");
-    printlol(clusters);
+    printf("calling swc\n");
+    swendsenWangCluster(s1, s2, &label, &Nc, &outbounds, L);
+    printf("cluster labels:\n");
+    for (int i=0; i < L; i++){
+        for (int j=0; j < L; j++){
+            printf("%i ", label[i*L + j]);
+        }
+        printf("\n");
+    }
     printf("outbounds:\n");
     printlol(outbounds);
 
-    destroyListofLists(clusters);
+    free(label);
     destroyListofLists(outbounds);
 
-    pcg32_random_t rng;
-    pcg32_srandom_r(&rng, 42u, 54u); // seed deterministically
-    for (int i=0; i < 100; i++)
-        printf("%f\n ", ((float)pcg32_random_r(&rng)) / (float) RAND32_MAX);
-    printf("\n");
-    printf("%li \n", RAND32_MAX);
+    //pcg32_random_t rng;
+    //pcg32_srandom_r(&rng, 42u, 54u); // seed deterministically
+    //for (int i=0; i < 100; i++)
+    //    printf("%f\n ", ((float)pcg32_random_r(&rng)) / (float) RAND32_MAX);
+    //printf("\n");
+    //printf("%li \n", RAND32_MAX);
     return 0;
 }
