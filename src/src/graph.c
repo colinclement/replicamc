@@ -3,31 +3,21 @@
 #include <graph.h>
 #include <ll.h>
 
-graph* initGraph(int Nv)
-{
+graph* initGraph(int Nv) {
     graph *newGraph = (graph *)malloc(sizeof(graph));
     newGraph->Nv = Nv;
     newGraph->edges = (edgenode **)malloc(Nv * sizeof(edgenode*));
-    if (newGraph->edges == NULL)
-    {
-        fprintf(stderr, "Failed to allocate new graph\n");
-        free(newGraph->edges);
-        exit(0);
-    }
-    
+    checkptr(newGraph)
     for (int i=0; i < Nv; i++)
         *(newGraph->edges + i) = NULL;
     return newGraph;
 }
 
-void destroyGraph(graph *G)
-{
+void destroyGraph(graph *G) {
     edgenode *tmp, *head;
-    for (int i=0; i < G->Nv; i++)
-    {
+    for (int i=0; i < G->Nv; i++) {
         head = *(G->edges + i);
-        while (head != NULL)
-        {
+        while (head != NULL) {
             tmp = head;
             head = head->nextedge;
             free(tmp);
@@ -37,52 +27,54 @@ void destroyGraph(graph *G)
     free(G);
 }
 
-void printGraph(graph *G)
-{
+void printGraph(graph *G) {
     printf("Graph with %i vertices\n", G->Nv);
     edgenode *head;
-    for (int i=0; i < G->Nv; i++)
-    {
+    for (int i=0; i < G->Nv; i++) {
         head = *(G->edges + i);
-        while (head != NULL)
-        {
+        while (head != NULL) {
             printf("%i connected to %i with weight %f\n", i, head->y, head->w);
             head = head->nextedge;
         }
     }
 }
 
-void insertEdge(int i, int j, float w, graph *G)
-{
-    edgenode *newEdge = (edgenode *)malloc(sizeof(edgenode));
-    if (newEdge == NULL)
-    {
-        fprintf(stderr, "Failed to allocate new edge\n");
-        free(newEdge);
-        exit(0);
-    }
-    newEdge->y = j;
-    newEdge->w = w;
-    newEdge->nextedge = *(G->edges+i);
-    *(G->edges+i) = newEdge;
+void insertEdge(int i, int j, float w, graph *G, int directed) {
+    edgenode *new = (edgenode *)malloc(sizeof(edgenode));
+    checkptr(new)
+    new->y = j;
+    new->w = w;
+    new->nextedge = *(G->edges+i);
+    *(G->edges+i) = new;
+    if ( ! directed )
+        insertEdge(j, i, w, G, 1);
 }
 
-float deltaE(int i, int *s, graph *G)
-{
+void addWeight(int i, int j, float dW, graph *G, int directed) {
+    edgenode *head = *(G->edges + i);
+    while (head != NULL){
+        if (head->y == j){
+            head->w += dW;
+            if ( ! directed )  // update weight point the other way
+                addWeight(j, i, dW, G, 1);
+            return;
+        }
+        head = head->nextedge;
+    }
+    insertEdge(i, j, dW, G, directed);
+}
+
+float deltaE(int i, int *s, graph *G) {
     float dE = 0.;
     edgenode *head = *(G->edges + i);
-    while (head != NULL)
-    {
+    while (head != NULL) {
         dE += s[head->y] * head->w;
         head = head->nextedge;
     }
     return 2 * s[i] * dE;
 }
 
-#define idx(y, x, L) (y*L + x)
-
-float deltaEsquarelattice(int i, int *s, float *J, int L)
-{
+float deltaEsquarelattice(int i, int *s, float *J, int L) {
     int y = i / L, x = i % L;
     float *Jv = J + L*L;  // vertical bonds
     
