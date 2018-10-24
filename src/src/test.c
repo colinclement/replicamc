@@ -10,11 +10,17 @@
 
 int main(int argc, const char* argv[])
 {
-    //graph *G = initGraph(3);    
-    //insertEdge(0, 1, 1, G);
-    //insertEdge(1, 2, 1, G);
-    //insertEdge(2, 1, 1, G);
-    //printGraph(G);
+    //graph *G0 = initGraph(3);    
+    //insertEdge(0, 1, 1, G0, 0);
+    //insertEdge(1, 2, 1, G0, 0);
+    //insertEdge(2, 0, 1, G0, 0);
+    //printGraph(G0);
+    //addWeight(0, 1, .1, G0, 0);
+    //printGraph(G0);
+    //addWeight(0, 2, 1.1, G0, 0);
+    //addWeight(0, 2, 1., G0, 0);
+    //printGraph(G0);
+    //destroyGraph(G0);
     //int s[3] = {1, -1, -1};
     //printf("%f\n", deltaE(0, s, G));
     //destroyGraph(G);
@@ -57,11 +63,10 @@ int main(int argc, const char* argv[])
     int s1[] = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
     int s2[] = {-1,1,1,1,1,1,-1,1,1,-1,-1,1,1,1,1,1};
 
-    lol *outbounds;
     int *label, Nc;
 
     printf("calling swc\n");
-    swendsenWangCluster(s1, s2, &label, &Nc, &outbounds, L);
+    swendsenWangCluster(s1, s2, &label, &Nc, L);
     printf("cluster labels:\n");
     for (int i=0; i < L; i++){
         for (int j=0; j < L; j++){
@@ -69,11 +74,16 @@ int main(int argc, const char* argv[])
         }
         printf("\n");
     }
-    printf("outbounds:\n");
-    printlol(outbounds);
-
     free(label);
-    destroyListofLists(outbounds);
+    float *J = (float *)malloc(2*L*L*sizeof(float));
+    for (int i=0; i < 2*L*L; i++)
+        J[i] = 1.;
+
+    graph *G;
+    clusterGraph(s1, s2, J, &G, L);
+    printGraph(G);
+    destroyGraph(G);
+    free(J);
 
     //pcg32_random_t rng;
     //pcg32_srandom_r(&rng, 42u, 54u); // seed deterministically
