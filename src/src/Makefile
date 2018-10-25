@@ -10,12 +10,12 @@ CFLAGS += -I$(PCGLIB)
 
 ODIR=obj
 
-LIBS=$(PCGLIB)/pcg_basic.o# -lm
+LIBS=$(PCGLIB)/pcg_basic.o -lm
 
-_DEPS=graph.h ll.h cluster.h
+_DEPS=graph.h ll.h cluster.h mc.h util.h
 DEPS=$(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ=test.o graph.o ll.o cluster.o
+_OBJ=test.o graph.o ll.o cluster.o mc.o util.o
 OBJ=$(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: %.c $(DEPS)

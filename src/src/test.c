@@ -1,9 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <graph.h>
-#include <ll.h>
 #include <cluster.h>
 #include <pcg_basic.h>
+#include <mc.h>
+#include <ll.h>
+#include <util.h>
 
 // 2**32-1
 #define RAND32_MAX 4294967295
@@ -60,29 +62,49 @@ int main(int argc, const char* argv[])
     //destroyListofLists(lolists);
     //destroyList(list3);
     int L=4;
-    int s1[] = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
-    int s2[] = {-1,1,1,1,1,1,-1,1,1,-1,-1,1,1,1,1,1};
+    int s[] = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+        -1,1,1,1,1,1,-1,1,1,-1,-1,1,1,1,1,1};
 
-    int *label, Nc;
+    float b[2] = {.483, .404};
+    int Nb = 2;
 
-    printf("calling swc\n");
-    swendsenWangCluster(s1, s2, &label, &Nc, L);
-    printf("cluster labels:\n");
-    for (int i=0; i < L; i++){
-        for (int j=0; j < L; j++){
-            printf("%i ", label[i*L + j]);
-        }
-        printf("\n");
-    }
-    free(label);
+    pcg32_random_t rng;
+    pcg32_srandom_r(&rng, 42u, 54u); // seed deterministically
+
+    printf("s1\n");
+    printSpins(s, L);
+    printf("s2\n");
+    printSpins(s+L*L, L);
+
     float *J = (float *)malloc(2*L*L*sizeof(float));
     for (int i=0; i < 2*L*L; i++)
-        J[i] = 1.;
+        J[i] = 1.; 
 
-    graph *G;
-    clusterGraph(s1, s2, J, &G, L);
-    printGraph(G);
-    destroyGraph(G);
+    //int *label = (int *)malloc(L*L*sizeof(int)), Nc;
+    //graph *G;
+    //clusterGraph(s1, s2, J, L, &label, &G);
+    //printSpins(label, L);
+    //printGraph(G);
+
+    //int flip[3] = {-1, -1, -1};
+    //flipClusters(s1, s2, L, flip, label);
+    //
+    mhsweep(s, b, Nb, J, L, &rng);
+
+    printf("s1\n");
+    printSpins(s, L);
+    printf("s2\n");
+    printSpins(s+L*L, L);
+
+    swstep(s, b, Nb, J, L, &rng);
+
+    printf("s1\n");
+    printSpins(s, L);
+    printf("s2\n");
+    printSpins(s+L*L, L);
+
+    //free(label);
+    //destroyGraph(G);
     free(J);
 
     //pcg32_random_t rng;
