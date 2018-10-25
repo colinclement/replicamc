@@ -5,17 +5,15 @@
 #include <ll.h>
 
 
-void swendsenWangCluster(int *s1, int *s2, int **label, int *Nc, int L) {
+void swendsenWangCluster(int *s1, int *s2, int L, int *label, int *Nc) {
     int N = L*L;
     int *tau = (int *)malloc(N*sizeof(int));
-    *label = (int *)malloc(N*sizeof(int));
     checkptr(tau)
-    checkptr(*label)
     ll *spins = initList(0);
 
     for (int i=0; i < N; i++) {
         tau[i] = s1[i] * s2[i];
-        (*label)[i] = -1;
+        label[i] = -1;
         if (i > 0)
             pushint(i, &spins);
     }
@@ -23,7 +21,7 @@ void swendsenWangCluster(int *s1, int *s2, int **label, int *Nc, int L) {
     while (spins != NULL) {
         // try making a new cluster starting with seed
         int seed = popint(&spins);
-        (*label)[seed] = *Nc;
+        label[seed] = *Nc;
         ll *queue = initList(seed);
 
         while (queue != NULL) {
@@ -32,9 +30,9 @@ void swendsenWangCluster(int *s1, int *s2, int **label, int *Nc, int L) {
             // Loop over neighbors of next
             for (int i=0; i < coordination; i++) {
                 int n = neighs[i];
-                if ((*label)[n] != *Nc){  // if n is not in current cluster 
+                if (label[n] != *Nc){  // if n is not in current cluster 
                     if (tau[seed] == tau[n]){
-                        (*label)[n] = *Nc;
+                        label[n] = *Nc;
                         pushint(n, &queue);
                         removeval(n, &spins);
                     }
@@ -46,10 +44,10 @@ void swendsenWangCluster(int *s1, int *s2, int **label, int *Nc, int L) {
     free(tau);
 }
 
-void clusterGraph(int *s1, int *s2, float *J, graph **G, int L)
+void clusterGraph(int *s1, int *s2, float *J, int L, int *label, graph **G)
 {
-    int *label, Nc;
-    swendsenWangCluster(s1, s2, &label, &Nc, L);
+    int Nc;
+    swendsenWangCluster(s1, s2, L, label, &Nc);
     *G = initGraph(Nc);
     for (int x=0; x < L; x++){
         for (int y=0; y < L; y++){
@@ -64,5 +62,12 @@ void clusterGraph(int *s1, int *s2, float *J, graph **G, int L)
             }
         }
     }
-    free(label);
+}
+
+void flipClusters(int *s1, int *s2, int L, int *flip, int *label){
+    for (int i=0; i < L*L; i++){
+        int f = flip[label[i]];
+        s1[i] *= f;
+        s2[i] *= f;
+    }
 }
