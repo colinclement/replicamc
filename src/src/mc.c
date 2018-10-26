@@ -4,12 +4,7 @@
 #include <graph.h>
 #include <ll.h>
 #include <math.h>
-
-#define RAND32_MAX 4294967295 // 2**32 - 1
-
-float pcgrand(pcg32_random_t *rng){
-    return (float) pcg32_random_r(rng) / (float) RAND32_MAX;
-}
+#include <util.h>
 
 void mhstep(int *s, float b, float *J, int L, pcg32_random_t *rng){
     for (int i=0; i < L*L; i++){
