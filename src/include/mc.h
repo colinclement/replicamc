@@ -3,7 +3,7 @@
 
 #include <pcg_basic.h>
 
-float pcgrand(pcg32_random_t *rng);
+void randomize(int *s, int Nb, int L, pcg32_random_t *rng);
 
 void mhstep(int *s, float b, float *J, int L, pcg32_random_t *rng);
 
