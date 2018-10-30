@@ -6,6 +6,11 @@
 #include <math.h>
 #include <util.h>
 
+void randomize(int *s, int Nb, int L, pcg32_random_t *rng){
+    for (int i=0; i < Nb*L*L; i++)
+        s[i] = (pcgrand(rng) < 0.5) ? -1 : 1;
+}
+
 void mhstep(int *s, float b, float *J, int L, pcg32_random_t *rng){
     for (int i=0; i < L*L; i++){
         float dE = deltaEsquarelattice(i, s, J, L);
