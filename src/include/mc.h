@@ -9,6 +9,6 @@ void mhstep(int *s, float b, float *J, int L, pcg32_random_t *rng);
 
 void mhsweep(int *s, float *b, int Nb, float *J, int L, pcg32_random_t *rng);
 
-void swstep(int *s, float *b, int Nb, float *J, int L, pcg32_random_t *rng);
- 
+void swstep(int *s, float *b, int Nb, float *J, int *label, int L, pcg32_random_t *rng);
+
 #endif
