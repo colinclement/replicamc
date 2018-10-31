@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include <graph.h>
@@ -6,6 +7,11 @@
 
 
 void swendsenWangCluster(int *s1, int *s2, int L, int *label, int *Nc) {
+    assert(NULL != s1);
+    assert(NULL != s2);
+    assert( L > 0 );
+    assert(NULL != label);
+
     int N = L*L;
     int *tau = (int *)malloc(N*sizeof(int));
     checkptr(tau)
@@ -44,8 +50,13 @@ void swendsenWangCluster(int *s1, int *s2, int L, int *label, int *Nc) {
     free(tau);
 }
 
-void clusterGraph(int *s1, int *s2, float *J, int L, int *label, graph **G)
-{
+void clusterGraph(int *s1, int *s2, float *J, int L, int *label, graph **G) {
+    assert(NULL != s1);
+    assert(NULL != s2);
+    assert(NULL != J);
+    assert(L > 0);
+    assert(NULL != label);
+
     int Nc;
     swendsenWangCluster(s1, s2, L, label, &Nc);
     *G = initGraph(Nc);
@@ -65,6 +76,12 @@ void clusterGraph(int *s1, int *s2, float *J, int L, int *label, graph **G)
 }
 
 void flipClusters(int *s1, int *s2, int L, int *flip, int *label){
+    assert(NULL != s1);
+    assert(NULL != s2);
+    assert(L > 0);
+    assert(NULL != flip);
+    assert(NULL != label);
+
     for (int i=0; i < L*L; i++){
         int f = flip[label[i]];
         s1[i] *= f;
