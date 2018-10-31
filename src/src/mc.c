@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <assert.h>
 #include <pcg_basic.h>
 #include <cluster.h>
 #include <graph.h>
@@ -7,11 +8,22 @@
 #include <util.h>
 
 void randomize(int *s, int Nb, int L, pcg32_random_t *rng){
+    assert(NULL != s);
+    assert(Nb > 0);
+    assert(L > 0);
+    assert(NULL != rng);
+
     for (int i=0; i < Nb*L*L; i++)
         s[i] = (pcgrand(rng) < 0.5) ? -1 : 1;
 }
 
 void mhstep(int *s, float b, float *J, int L, pcg32_random_t *rng){
+    assert(NULL != s);
+    assert(b > 0);
+    assert(NULL != J);
+    assert(L > 0);
+    assert(NULL != rng);
+
     for (int i=0; i < L*L; i++){
         float dE = deltaEsquarelattice(i, s, J, L);
         if (dE < 0)
@@ -22,13 +34,28 @@ void mhstep(int *s, float b, float *J, int L, pcg32_random_t *rng){
 }
 
 void mhsweep(int *s, float *b, int Nb, float *J, int L, pcg32_random_t *rng){
+    assert(NULL != s);
+    assert(NULL != b);
+    assert(Nb > 0);
+    assert(NULL != J);
+    assert(L > 0);
+    assert(NULL != rng);
+
     for (int i=0; i < Nb; i++)
         mhstep(s+i*L*L, b[i], J, L, rng);
 }
 
-void swstep(int *s, float *b, int Nb, float *J, int L, pcg32_random_t *rng){
+void swstep(int *s, float *b, int Nb, float *J, int *label, int L, 
+        pcg32_random_t *rng){
+    assert(NULL != s);
+    assert(NULL != b);
+    assert(Nb > 0);
+    assert(NULL != J);
+    assert(NULL != label);
+    assert(L > 0);
+    assert(NULL != rng);
+
     int N = L*L;
-    int *label=(int *)malloc(N*sizeof(int));
     for (int i=0; i < Nb-1; i++){
         graph *G;
         float b_eff = b[i] - b[i+1];
@@ -52,5 +79,4 @@ void swstep(int *s, float *b, int Nb, float *J, int L, pcg32_random_t *rng){
         destroyGraph(G);
         free(flip);
     }
-    free(label);
 }
