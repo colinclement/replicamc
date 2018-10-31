@@ -4,13 +4,13 @@
 #include <ll.h>
 
 graph* initGraph(int Nv) {
-    graph *newGraph = (graph *)malloc(sizeof(graph));
-    newGraph->Nv = Nv;
-    newGraph->edges = (edgenode **)malloc(Nv * sizeof(edgenode*));
-    checkptr(newGraph)
+    graph *new = (graph *)malloc(sizeof *new);
+    new->Nv = Nv;
+    new->edges = (edgenode **)malloc(Nv * sizeof(edgenode*));
+    checkptr(new)
     for (int i=0; i < Nv; i++)
-        *(newGraph->edges + i) = NULL;
-    return newGraph;
+        *(new->edges + i) = NULL;
+    return new;
 }
 
 void destroyGraph(graph *G) {
@@ -40,7 +40,7 @@ void printGraph(graph *G) {
 }
 
 void insertEdge(int i, int j, float w, graph *G, int directed) {
-    edgenode *new = (edgenode *)malloc(sizeof(edgenode));
+    edgenode *new = (edgenode *)malloc(sizeof *new);
     checkptr(new)
     new->y = j;
     new->w = w;
