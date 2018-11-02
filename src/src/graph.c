@@ -9,14 +9,14 @@ graph* initGraph(int Nv) {
     new->edges = (edgenode **)malloc(Nv * sizeof(edgenode*));
     checkptr(new)
     for (int i=0; i < Nv; i++)
-        *(new->edges + i) = NULL;
+        new->edges[i] = NULL;
     return new;
 }
 
 void destroyGraph(graph *G) {
     edgenode *tmp, *head;
     for (int i=0; i < G->Nv; i++) {
-        head = *(G->edges + i);
+        head = G->edges[i];
         while (head != NULL) {
             tmp = head;
             head = head->nextedge;
@@ -31,7 +31,7 @@ void printGraph(graph *G) {
     printf("Graph with %i vertices\n", G->Nv);
     edgenode *head;
     for (int i=0; i < G->Nv; i++) {
-        head = *(G->edges + i);
+        head = G->edges[i];
         while (head != NULL) {
             printf("%i connected to %i with weight %f\n", i, head->y, head->w);
             head = head->nextedge;
@@ -44,14 +44,14 @@ void insertEdge(int i, int j, float w, graph *G, int directed) {
     checkptr(new)
     new->y = j;
     new->w = w;
-    new->nextedge = *(G->edges+i);
-    *(G->edges+i) = new;
+    new->nextedge = G->edges[i];
+    G->edges[i] = new;
     if ( ! directed )
         insertEdge(j, i, w, G, 1);
 }
 
 void addWeight(int i, int j, float dW, graph *G, int directed) {
-    edgenode *head = *(G->edges + i);
+    edgenode *head = G->edges[i];
     while (head != NULL){
         if (head->y == j){
             head->w += dW;
@@ -66,7 +66,7 @@ void addWeight(int i, int j, float dW, graph *G, int directed) {
 
 float deltaE(int i, int *s, graph *G) {
     float dE = 0.;
-    edgenode *head = *(G->edges + i);
+    edgenode *head = G->edges[i];
     while (head != NULL) {
         dE += s[head->y] * head->w;
         head = head->nextedge;
