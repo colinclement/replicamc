@@ -3,7 +3,7 @@
 
 IDIR=../include
 CC=gcc
-CFLAGS=-I$(IDIR) 
+CFLAGS=-I$(IDIR) -O3
 
 PCGLIB=../lib/pcg-c-basic-master
 CFLAGS += -I$(PCGLIB)
