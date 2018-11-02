@@ -9,9 +9,12 @@ import matplotlib.pyplot as plt
 
 import replicamc
 
+def loadsamples(fname):
+    ss = np.loadtxt(fname, dtype='str')
+    return 2*np.array([list(map(int, s)) for s in ss])-1
+
 rng = np.random.RandomState(14850)
 L = 4
-J = rng.randn(2, L, L)
 blist=[1.5, 1.]
 
 def allstates(L=4):
@@ -29,10 +32,11 @@ def exactprobs(J, blist):
     probs /= probs.sum(1)[:,None]
     return probs
 
-def countstates(J, blist, n=200000):
-    L = J.shape[1]
+def mcsample(J, blist, n=200000):
     mc = replicamc.ReplicaMonteCarlo(J.shape[2], J=J, tlist=1./np.array(blist))
-    samples = np.array(mc.run(n, period=2, thin=20))
+    return np.array(mc.run(n, period=2, thin=20))
+
+def countstates(samples):
     counters = [Counter(map(tuple, samples[:,i])) for i in
                 range(samples.shape[1])]
     N = len(samples)
@@ -40,9 +44,7 @@ def countstates(J, blist, n=200000):
             for i, cnt in enumerate(counters)]
     return np.array(probs)
 
-def compare(J=J, blist=blist, n=1000000):
-    p = exactprobs(J, blist)
-    pmc = countstates(J, blist, n)
+def compare(p, pmc, blist=blist):
     order = np.argsort(p[0])
     for i in range(len(blist)):
         plt.plot(p[i][order], label=r'Exact $\beta$={}'.format(blist[i]))
@@ -54,3 +56,11 @@ def compare(J=J, blist=blist, n=1000000):
     plt.xlim([nonzero.min(), 2**16])
     plt.ylim([pmc[0,order][nonzero].min(), p.max()])
     return plt.gcf()
+
+
+if __name__=="__main__":
+    J = np.loadtxt("inp-bonds.txt").reshape(2, L, L)
+    samples = loadsamples("inp-output.txt").reshape(-1, 2, L*L)
+    pmc = countstates(samples)
+    p = exactprobs(J, blist)
+    compare(p, pmc)
