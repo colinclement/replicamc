@@ -15,13 +15,13 @@ LIBS=$(PCGLIB)/pcg_basic.o -lm
 _DEPS=graph.h ll.h cluster.h mc.h util.h
 DEPS=$(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ=test.o graph.o ll.o cluster.o mc.o util.o
+_OBJ=replicamc.o graph.o ll.o cluster.o mc.o util.o
 OBJ=$(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-test: $(OBJ)
+replicamc: $(OBJ)
 	$(CC) -o $@ $^ $(LIBS) $(CFLAGS)
 
 .PHONY: clean # dont try to make a file named clean
