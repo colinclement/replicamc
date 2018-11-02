@@ -13,6 +13,15 @@
 
 #define MAXLEN 256
 
+#define docs "Input file format:\n"\
+    "L\n"\
+    "burntime runtime save period\n"\
+    "Nbetas\n"\
+    "beta1\n"\
+    "beta2\n"\
+    "...\n"\
+    "beta_Nbetas\n"
+
 int main(int argc, const char* argv[])
 {
     init initvalues;
@@ -30,8 +39,8 @@ int main(int argc, const char* argv[])
             s1 = strtoul(argv[2], NULL, 0);
             break;
         default:
-            printf("Requires 1 or 3 arguments.\n Usage: test inputfile "
-                   "[seed0 seed1]\n");
+            printf("Requires 1 or 3 arguments.\nUsage: test inputfile "
+                   "[seed0 seed1]\n\n%s", docs);
             return 0;
     }
 
