@@ -74,6 +74,7 @@ int main(int argc, const char* argv[])
     }
 
     FILE *fp = fopen(outname, "a");
+    // Run MC
     for (int t=0; t < initvalues.t[1]; t++){
         mhsweep(s, b, Nb, J, L, &rng);
         swstep(s, b, Nb, J, label, L, &rng);
