@@ -1,6 +1,8 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+#include <stdio.h>
+
 typedef struct init init;
 
 struct init {
@@ -13,6 +15,12 @@ struct init {
 void readInputFile(const char *fname, init *initvalues);
 
 void destroyInit(init *initvalues);
+
+void makeOutputName(const char *fname, char *outname, char *toappend);
+
+void writeSpins(FILE *fp, int *s, int L, int Nb);
+
+void saveBonds(const char *filename, float *J, int L);
 
 float pcgrand(pcg32_random_t *rng);
 

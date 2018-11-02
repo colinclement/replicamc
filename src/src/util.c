@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 #include <assert.h>
 #include <stdio.h>
@@ -7,6 +8,7 @@
 #include <util.h>
 
 #define RAND32_MAX 4294967295 // 2**32 - 1
+#define MAXLEN 256
 
 void readInputFile(const char *fname, init *initvalues){
     /* reads file fname and populates init struct
@@ -47,13 +49,52 @@ void readInputFile(const char *fname, init *initvalues){
                     initvalues->Nb);
             exit(1);
         }
-     
-    printf("%i\n", i);
     fclose(fp);
 }
 
 void destroyInit(init *initvalues){
     free(initvalues->b);
+    initvalues->b = NULL;
+}
+
+void makeOutputName(const char *fname, char *outname, char *toappend){
+    if ((unsigned)strlen(fname) > MAXLEN-10){
+        fprintf(stderr, "fname %s is within 10 chars of length %i", 
+                fname, MAXLEN);
+        exit(1);
+    }
+    char cpy[MAXLEN]; 
+    strcpy(cpy, fname);
+    char *p = strtok(cpy, ".");
+    int i = 0;
+    strcpy(outname, p);
+    while (NULL != p){
+        if (!i){
+            if (NULL == toappend)
+                strcat(outname, "-output");
+            else
+                strcat(outname, toappend);
+            strcat(outname, ".");
+        }
+        p = strtok(NULL, ".");
+        if (NULL != p)
+            strcat(outname, p);
+        i++;
+    }
+}
+
+void writeSpins(FILE *fp, int *s, int L, int Nb){
+    for (int i=0; i < L*L*Nb; i++)
+        fprintf(fp, "%i", (s[i] > 0));
+    fprintf(fp, "\n");
+    fflush(fp);
+}
+
+void saveBonds(const char *filename, float *J, int L){
+    FILE *fp = fopen(filename, "w");
+    for (int i=0; i < 2*L*L; i++)
+        fprintf(fp, "%f\n", J[i]);
+    fclose(fp);
 }
 
 float pcgrand(pcg32_random_t *rng){
