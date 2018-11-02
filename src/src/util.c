@@ -29,13 +29,19 @@ void readInputFile(const char *fname, init *initvalues){
         exit(1);
     }
 
-    fscanf(fp, "%i", &(initvalues->L));
-    fscanf(fp, "%i %i %i", initvalues->t, initvalues->t+1, initvalues->t+2);
-    fscanf(fp, "%i", &(initvalues->Nb));
+    int read;
+    checkscan(fscanf(fp, "%i", &(initvalues->L)), 1, read);
+    checkscan(fscanf(fp, "%i %i %i", initvalues->t, initvalues->t+1, 
+                initvalues->t+2), 3, read);
+    checkscan(fscanf(fp, "%i", &(initvalues->Nb)), 1, read);
 
     initvalues->b = (float *)malloc(initvalues->Nb * sizeof(float));
     int i=0;
-    while (fscanf(fp, "%f", initvalues->b + i) != EOF){
+    while ((read=fscanf(fp, "%f", initvalues->b + i)) != EOF){
+        if (1 != read){
+            fprintf(stderr, "Expected 1 value read %i\n", read);
+            exit(1);
+        }
         i++;
         //fgetc(fp);  // moves past newline
         if (i > initvalues->Nb){

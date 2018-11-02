@@ -3,6 +3,11 @@
 
 #include <stdio.h>
 
+#define checkscan(val, N, r) if (N != (r = val)){\
+    fprintf(stderr, "Expected %i values read %i\n", N, r);\
+    exit(1);\
+    }
+
 typedef struct init init;
 
 struct init {
